@@ -1,9 +1,12 @@
 package main
 
 import (
-	"fmt"
+	"github.com/100mik/BasicCMS/app"
+	"os"
 )
 
 func main() {
-fmt.Println("hello")
+mycms := app.App{}
+mycms.Initialise()
+mycms.Run(os.Args)
 }
