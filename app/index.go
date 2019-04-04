@@ -2,13 +2,17 @@ package app
 
 import (
 	"fmt"
+	"github.com/gorilla/securecookie"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"log"
 	"net/http"
 )
 
-var Configuration Settings
+var(
+	Configuration Settings
+	CookieHandler *securecookie.SecureCookie
+)
 
 func (mycms *App) Initialise() {
 	ConfigureInstance()
@@ -16,13 +20,13 @@ func (mycms *App) Initialise() {
 	Configuration.DBConn = fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local",
 		Configuration.DBUsername, Configuration.DBPassword, Configuration.DBName)
 
-	fmt.Println(Configuration.DBConn)
-
 	mycms.LoadRoutes()
+
+	CookieHandler = securecookie.New(securecookie.GenerateRandomKey(32), securecookie.GenerateRandomKey(32))
 }
 
 func (mycms *App) migrate() {
-	mycms.DB.CreateTable(&User{})
+	mycms.DB.CreateTable(&Post{}, &User{})
 }
 
 func (mycms *App) Run(Args []string) {
